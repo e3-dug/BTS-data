@@ -41,3 +41,8 @@ bts_raw['Production_bdt'] = bts_raw.apply(converter, axis = 1)
 ## columnar pivot table
 bts_national = pd.pivot_table(bts_raw, index = ['Year'], columns = ['Scenario','Resource Category', 'Feedstock', 'Biomass Price'],
                               values = 'Production_bdt', aggfunc = np.sum)
+
+scenario_select = ['3% yield inc.', 'High housing, high energy demands',
+                  'Wastes and other residues']
+
+bts_curves = bts_national[scenario_select]
