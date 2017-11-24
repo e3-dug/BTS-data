@@ -18,9 +18,6 @@ bts_states = pd.pivot_table(bts_raw, index = ['State', 'Year','Feedstock'], colu
 bts_national = pd.pivot_table(bts_raw, index = ['Year','Feedstock'], columns = ['Scenario','Resource Category',  'Biomass Price'],
                               values = 'Production', aggfunc = np.sum)
 
-## drop unncessary level from MultiIndex
-bts_states.columns = bts_states.columns.droplevel()
-bts_national.columns = bts_national.columns.droplevel()
 
 bts_states.to_csv('bts_states_curves.csv')
 bts_national.to_csv('bts_national_curves.csv')
