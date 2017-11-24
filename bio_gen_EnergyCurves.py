@@ -1,3 +1,7 @@
+import pandas as pd
+import os
+import numpy as np
+
 os.chdir(r'S:\ZacharySubins_Documents\NYSERDA 100%\BTS Data Download')
 
 ## read csv into memory, force pandas to read in mixed columns
@@ -7,12 +11,13 @@ bts_raw = pd.read_csv('billionton_state_download.csv', low_memory = False)
 bts_raw = bts_raw[bts_raw['Production Unit'] == 'dt']
 
 ## unit conversion mappings, derived from NYSERDA data spreadsheet
+os.chdir(r'C:\Users\dan\Documents\BiofuelsDevelopment\bts-data\BTS-data')
 mappings = pd.read_csv('feedstock_mappings.csv', index_col=0)
 
 
 ## bin conversion
 bin_conversion_dict = pd.Series(mappings['E3conv_cat'].values,
-                                index = mappings['BTSfeedstock']).to_dict()
+                                index = mappings.index).to_dict()
 
 def EthreeCat(feedstock):
     try:
@@ -55,42 +60,42 @@ bts_raw['high_tbtu'] = bts_raw['high_gge'] * tbtu_gge
 
 ## generate cumulative curves
 ## low gge, columnar pivot table, with state index
-bts_states_lgge = pd.pivot_table(bts_raw, index = ['State', 'Year','Feedstock'],
+bts_states_lgge = pd.pivot_table(bts_raw, index = ['State', 'Year', 'EthreeCategory' ,'Feedstock'],
                                  columns = ['Scenario','Resource Category',  'Biomass Price'],
                                  values = 'low_gge', aggfunc = np.sum)
 
 ## low gge, national, pivot table to match Tory data
-bts_national_lgge = pd.pivot_table(bts_raw, index = ['Year','Feedstock'],
+bts_national_lgge = pd.pivot_table(bts_raw, index = ['Year', 'EthreeCategory','Feedstock'],
                                    columns = ['Scenario','Resource Category',  'Biomass Price'],
                                    values = 'low_gge', aggfunc = np.sum)
 
 ## low gge, columnar pivot table, with state index
-bts_states_lgge = pd.pivot_table(bts_raw, index = ['State', 'Year','Feedstock'],
+bts_states_hgge = pd.pivot_table(bts_raw, index = ['State', 'Year', 'EthreeCategory' ,'Feedstock'],
                                  columns = ['Scenario','Resource Category',  'Biomass Price'],
-                                 values = 'low_gge', aggfunc = np.sum)
+                                 values = 'high_gge', aggfunc = np.sum)
 
 ## low gge, national, pivot table to match Tory data
-bts_national_lgge = pd.pivot_table(bts_raw, index = ['Year','Feedstock'],
+bts_national_hgge = pd.pivot_table(bts_raw, index = ['Year', 'EthreeCategory','Feedstock'],
                                    columns = ['Scenario','Resource Category',  'Biomass Price'],
-                                   values = 'low_gge', aggfunc = np.sum)
+                                   values = 'high_gge', aggfunc = np.sum)
 
 ## low Tbtu columnar pivot table, with state index
-bts_states_lbtu = pd.pivot_table(bts_raw, index = ['State', 'Year','Feedstock'],
+bts_states_lbtu = pd.pivot_table(bts_raw, index = ['State', 'Year', 'EthreeCategory' ,'Feedstock'],
                                  columns = ['Scenario','Resource Category',  'Biomass Price'],
                                  values = 'low_tbtu', aggfunc = np.sum)
 
 ## low national Tbtu pivot table to match Tory data
-bts_national_lbtu = pd.pivot_table(bts_raw, index = ['Year','Feedstock'],
+bts_national_lbtu = pd.pivot_table(bts_raw, index = ['Year', 'EthreeCategory','Feedstock'],
                                    columns = ['Scenario','Resource Category',  'Biomass Price'],
                                    values = 'low_tbtu', aggfunc = np.sum)
 
 ## high Tbtu columnar pivot table, with state index
-bts_states_hbtu = pd.pivot_table(bts_raw, index = ['State', 'Year','Feedstock'],
+bts_states_hbtu = pd.pivot_table(bts_raw, index = ['State', 'Year', 'EthreeCategory' ,'Feedstock'],
                                  columns = ['Scenario','Resource Category',  'Biomass Price'],
                                  values = 'high_tbtu', aggfunc = np.sum)
 
 ## high national pivot table to match Tory data
-bts_national_hbtu = pd.pivot_table(bts_raw, index = ['Year','Feedstock'],
+bts_national_hbtu = pd.pivot_table(bts_raw, index = ['Year', 'EthreeCategory','Feedstock'],
                                    columns = ['Scenario','Resource Category',  'Biomass Price'],
                                    values = 'high_tbtu', aggfunc = np.sum)
 
