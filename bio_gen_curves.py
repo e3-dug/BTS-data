@@ -19,14 +19,15 @@ mappings = pd.read_csv('feedstock_mappings.csv', index_col=0)
 bin_conversion_dict = pd.Series(mappings['E3conv_cat'].values,
                                 index = mappings.index).to_dict()
 
-def EthreeCat(feedstock):
+def ethree_cat(feedstock):
     try:
         ethree = bin_conversion_dict[feedstock]
     except KeyError:
         ethree = 'NonPathways'
     return(ethree)
 
-bts_raw['EthreeCategory'] = bts_raw['Feedstock'].apply(EthreeCat)
+
+bts_raw['EthreeCategory'] = bts_raw['Feedstock'].apply(ethree_cat)
 
 ## columnar pivot table, with state index
 bts_states = pd.pivot_table(bts_raw, index = ['State', 'Year', 'EthreeCategory', 'Feedstock'],
