@@ -14,13 +14,12 @@ class ParseCurves:
 
 
     def read_bdt_curves(self):
-        '''reads supply curve data as bdt'''
         if self.file_type == 'state':
-            self.frame = pd.read_csv(self.path, index_col=[0,1,2], header = [0,1,2])
-            self.frame = self.frame[self.scenario]
+            self.frame = pd.read_csv(self.path, index_col=[0,1,2,3], header = [0,1,2])
+            #self.frame = self.frame[self.scenario]
         elif self.file_type == 'national':
-            self.frame = pd.read_csv(self.path, index_col = [0,1], header = [0,1,2])
-            self.frame = self.frame[self.scenario]
+            self.frame = pd.read_csv(self.path, index_col = [0,1,2], header = [0,1,2])
+            #self.frame = self.frame[self.scenario]
         else:
             print('bad entry: enter state or national')
         return(self.frame)
