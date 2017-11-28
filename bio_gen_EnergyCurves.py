@@ -62,33 +62,50 @@ bts_raw['high_tbtu'] = bts_raw['high_gge'] * tbtu_gge
 
 os.chdir(r'S:\ZacharySubins_Documents\NYSERDA 100%\BTS Data Download\curves')
 
-def gen_curve(val, level):
+## generate supply curves for low/high conversion pathways
+def gen_curve(val_type, level):
     '''generates biomass supply curves from Billion ton study data
+    returns ouptputs for 'gge' and 'tbtu' for low and high conversion pathways
     '''
+
+    if val_type.lower() == 'gge':
+        val = ['low_gge', 'high_gge']
+
+    elif val_type.lower() == 'tbtu':
+        val = ['low_tbtu', 'high_tbtu']
+
+    else:
+        raise ValueError('entry must be gge or tbtu')
 
     if level.lower() == 'state':
         out = pd.pivot_table(bts_raw, index = ['State', 'Year', 'EthreeCategory' ,'Feedstock'],
-                             columns = ['Scenario','Resource Category',  'Biomass Price'],
+                             columns = ['Scenario', 'Resource Category',  'Biomass Price'],
                              values = val, aggfunc = np.sum)
 
-        return(out.to_csv('bts_states_' + str(val) + '.csv'))
+        return(out.to_csv('bts_' + str(val_type) + '_' + str(level) + '.csv'))
 
     elif level.lower() == 'national':
         out = pd.pivot_table(bts_raw, index = ['Year', 'EthreeCategory' ,'Feedstock'],
-                             columns = ['Scenario','Resource Category',  'Biomass Price'],
+                             columns = ['Scenario', 'Resource Category',  'Biomass Price'],
                              values = val, aggfunc = np.sum)
 
-        return(out.to_csv('bts_national_' + str(val) +'.csv'))
+        return(out.to_csv('bts_' + str(val_type) + '_' + str(level) + '.csv'))
 
     else:
         print('invalide entry: enter state or national as level')
 
 
-vals = ['low_gge', 'high_gge', 'low_tbtu', 'high_tbtu']
+gen_curve('tbtu', 'state')
+gen_curve('tbtu', 'national')
+gen_curve('gge', 'state')
+gen_curve('gge', 'national')
 
-for i in vals:
-    gen_curve(i, 'national')
-    gen_curve(i, 'state')
+
+#vals = ['low_gge', 'high_gge', 'low_tbtu', 'high_tbtu']
+#
+#for i in vals:
+#    gen_curve(i, 'national')
+#    gen_curve(i, 'state')
 
 
 #
